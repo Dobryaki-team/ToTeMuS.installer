@@ -27,6 +27,7 @@ dependencies {
     implementation("org.codehaus.groovy:groovy-all:3.0.9")
     implementation("org.python:jython-standalone:2.7.2")
     implementation("org.apache.logging.log4j:log4j-core:2.19.0.redhat-00001")
+    implementation(kotlin("script-runtime"))
 }
 
 tasks.jar {
@@ -40,7 +41,21 @@ tasks.jar {
     from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
 }
 
+fun getReleases() {
+    val pathReleases = File("releases")
+    if (!pathReleases.exists()) {
+        pathReleases.mkdirs()
+    }
+    File("build/launch4j/installer.blin_totemusa.exe")
+        .renameTo(File("releases/installer.blin_totemusa.exe"));
+    File("build/libs/installer.blin_totemusa.jar")
+        .renameTo(File("releases/installer.blin_totemusa.jar"));
+}
+
 launch4j {
+    File("build").delete()
+    File("releases").delete()
     mainClassName = "totemus.space.MainKt"
     icon = "${projectDir}/src/main/resources/icons/temp_icon.ico"
+    getReleases()
 }

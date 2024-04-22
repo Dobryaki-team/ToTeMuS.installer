@@ -3,18 +3,18 @@ package totemus.space
 /* imports */
 // local
 import handlers.Exit
+import handlers.SetIcon
 import totemus.space.logs.log
-import totemus.space.logs.path
 import totemus.space.mod.Manager
+// java*
 // java awt
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.GraphicsEnvironment
-// other
+// java io
 import java.io.File
 import java.io.InputStream
-import java.util.*
 // swing
 import javax.swing.*
 import javax.swing.plaf.FontUIResource
@@ -46,11 +46,6 @@ object Root {
     }
 
     fun start() {
-        log("Started.\nlog file path: $path")
-
-        val russianLocale = Locale("ru", "RU")
-        Locale.setDefault(russianLocale)
-
         val fontGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
         fontGraphicsEnvironment.registerFont(scaledFiraCode)
         setUIFont(FontUIResource(scaledFiraCode))
@@ -75,6 +70,7 @@ object Root {
             progressBar.isIndeterminate = false
             progressBar.value = 0
             Manager.chooseDownloadFolder(progressBar)
+            log("\n")
         }
         panel.add(downloadButton)
 
@@ -84,6 +80,7 @@ object Root {
         }
         panel.add(logButton)
 
+        SetIcon.set(frame)
         frame.defaultCloseOperation = JFrame.DO_NOTHING_ON_CLOSE
         frame.addWindowListener(Exit())
         frame.contentPane.add(panel, BorderLayout.CENTER)

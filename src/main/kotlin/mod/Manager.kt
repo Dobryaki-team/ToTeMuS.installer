@@ -13,6 +13,7 @@ import okhttp3.Request
 import totemus.space.Root.scaledMarskefont
 import totemus.space.logs.log
 import totemus.space.logs.path
+import totemus.space.logs.removeLog
 // java*
 import java.io.File
 import java.io.FileOutputStream
@@ -159,7 +160,7 @@ class Manager {
                     if (result == JFileChooser.APPROVE_OPTION) {
                         val selectedFolder = fileChooser.selectedFile
                         val folder: String = if (!selectedFolder.absolutePath.endsWith("mods")) {
-                            selectedFolder.absolutePath + "\\mods"
+                            selectedFolder.absolutePath + File.separator + "mods"
                         } else {
                             (selectedFolder.absolutePath)
                         }
@@ -184,9 +185,13 @@ class Manager {
 
             val logFile = File(path)
             if (!logFile.exists()) {
-                log("The log file was not found.")
-                JOptionPane.showMessageDialog(null, "The logs are empty.")
-                return
+                if (!removeLog()) {
+                    log("The log file was not found.")
+                    JOptionPane.showMessageDialog(null, "The logs are empty.")
+                    return
+                } else {
+                    log("Started.\nlog file path: $path")
+                }
             }
 
             try {
