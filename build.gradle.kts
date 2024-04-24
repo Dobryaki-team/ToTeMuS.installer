@@ -32,6 +32,7 @@ dependencies {
 
 tasks.jar {
     File("build").delete()
+    File("releases").delete()
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     manifest {
         attributes["Main-Class"] = "totemus.space.MainKt"
@@ -39,6 +40,7 @@ tasks.jar {
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
     from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
+    getReleases()
 }
 
 fun getReleases() {
@@ -47,14 +49,14 @@ fun getReleases() {
         pathReleases.mkdirs()
     }
     File("build/launch4j/installer.blin_totemusa.exe")
-        .renameTo(File("releases/installer.blin_totemusa.exe"));
+        .renameTo(File("releases/ToTeMuS_installer._.exe"));
     File("build/libs/installer.blin_totemusa.jar")
-        .renameTo(File("releases/installer.blin_totemusa.jar"));
+        .renameTo(File("releases/ToTeMuS_installer._.jar"));
 }
 
 launch4j {
     File("build").delete()
-    File("releases").delete()
+    println(File("releases").delete())
     mainClassName = "totemus.space.MainKt"
     icon = "${projectDir}/src/main/resources/icons/temp_icon.ico"
     getReleases()
