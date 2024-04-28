@@ -25,14 +25,31 @@ class Manager {
     companion object {
         private val client = OkHttpClient()
         @Suppress("ConstPropertyName")
-        private const val apiLink: String = "http://c3.play2go.cloud:20007/get"
+        private val githubLink: String = File("/links/github.api.link").readText()
+
+        private fun getApiLink(link: String): String {
+            val request = Request.Builder()
+                .url(link)
+                .build();
+            try {
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) throw RuntimeException("The mod could not be installed: $response")
+                    return response.body.toString()
+                }
+            } catch (e: Exception) {
+                log("Error loading the mod: ${e.message}")
+                throw e
+            }
+        }
+
+        private val apiLink: String = getApiLink(githubLink) + "/get"
 
         private fun downloadMod(url: String, destination: File) {
             try {
                 log("The download of the mod has started: $url")
                 val request = Request.Builder()
                     .url(url)
-                    .build()
+                    .build();
 
                 client.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) throw RuntimeException("The mod could not be installed: $response")
