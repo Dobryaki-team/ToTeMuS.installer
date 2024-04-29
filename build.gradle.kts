@@ -56,7 +56,7 @@ fun getReleases() {
 
 launch4j {
     File("build").delete()
-    println(File("releases").delete())
+    File("releases").delete()
     mainClassName = "totemus.space.MainKt"
     icon = "${projectDir}/src/main/resources/icons/temp_icon.ico"
     getReleases()

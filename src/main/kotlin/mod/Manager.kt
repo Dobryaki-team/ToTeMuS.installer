@@ -1,48 +1,36 @@
-@file:Suppress("SENSELESS_COMPARISON", "UNNECESSARY_SAFE_CALL")
+@file:Suppress("SENSELESS_COMPARISON", "UNNECESSARY_SAFE_CALL", "ConstPropertyName")
 
 package totemus.space.mod
 
 /* imports */
 // json
+// okhttp3
+// local
+// java*
 import com.google.gson.Gson
 import com.google.gson.JsonElement
-// okhttp3
 import okhttp3.OkHttpClient
 import okhttp3.Request
-// local
 import totemus.space.Root.scaledMarskefont
 import totemus.space.logs.log
 import totemus.space.logs.path
 import totemus.space.logs.removeLog
-// java*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.swing.*
+
 /* end */
 
 class Manager {
     companion object {
         private val client = OkHttpClient()
-        @Suppress("ConstPropertyName")
-        private val githubLink: String = File("/links/github.api.link").readText()
-
-        private fun getApiLink(link: String): String {
-            val request = Request.Builder()
-                .url(link)
-                .build();
-            try {
-                client.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) throw RuntimeException("The mod could not be installed: $response")
-                    return response.body.toString()
-                }
-            } catch (e: Exception) {
-                log("Error loading the mod: ${e.message}")
-                throw e
-            }
-        }
-
-        private val apiLink: String = getApiLink(githubLink) + "/get"
+        private const val githubLink: String = "https://raw.githubusercontent.com/Dobryaki-team/ToTeMuS.installer/main/src/main/resources/links/api.link"
+        private var apiLink: String = ((client.newCall(Request.Builder().url(githubLink).build()).execute().body!!.string())
+            .replace(
+                Regex("['\"]"),
+                "")
+            .trim()) + "/get";
 
         private fun downloadMod(url: String, destination: File) {
             try {
@@ -63,6 +51,7 @@ class Manager {
                 log("The mod is loaded on the way: ${destination.absolutePath}")
             } catch (e: Exception) {
                 log("Error loading the mod: ${e.message}")
+                JOptionPane.showMessageDialog(null, "Error loading the mod: ${e.message}")
                 throw e
             }
         }
@@ -156,8 +145,8 @@ class Manager {
             try {
                 client.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) {
-                        log("Couldn't get the mod versions.")
-                        JOptionPane.showMessageDialog(null, "Couldn't get the mod versions.")
+                        log("Couldn't get the mod versions, code: ${response.code}")
+                        JOptionPane.showMessageDialog(null, "Couldn't get the mod versions, code: ${response.code}")
                         return
                     }
 
