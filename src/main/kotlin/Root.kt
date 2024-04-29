@@ -46,6 +46,7 @@ object Root {
     }
 
     fun start() {
+        log("Started")
         val fontGraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
         fontGraphicsEnvironment.registerFont(scaledFiraCode)
         setUIFont(FontUIResource(scaledFiraCode))
