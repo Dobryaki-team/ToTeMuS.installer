@@ -49,9 +49,9 @@ fun getReleases() {
         pathReleases.mkdirs()
     }
     File("build/launch4j/installer.blin_totemusa.exe")
-        .renameTo(File("releases/ToTeMuS_installer._.exe"));
+        .renameTo(File("releases/ToTeMuS_installer._.exe"))
     File("build/libs/installer.blin_totemusa.jar")
-        .renameTo(File("releases/ToTeMuS_installer._.jar"));
+        .renameTo(File("releases/ToTeMuS_installer._.jar"))
 }
 
 launch4j {

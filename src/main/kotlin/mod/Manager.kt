@@ -26,18 +26,18 @@ class Manager {
     companion object {
         private val client = OkHttpClient()
         private const val githubLink: String = "https://raw.githubusercontent.com/Dobryaki-team/ToTeMuS.installer/main/src/main/resources/links/api.link"
-        private var apiLink: String = ((client.newCall(Request.Builder().url(githubLink).build()).execute().body!!.string())
+        private var apiLink: String = ((client.newCall(Request.Builder().url(githubLink).build()).execute().body.string())
             .replace(
                 Regex("['\"]"),
                 "")
-            .trim()) + "/get";
+            .trim()) + "/get"
 
         private fun downloadMod(url: String, destination: File) {
             try {
                 log("The download of the mod has started: $url")
                 val request = Request.Builder()
                     .url(url)
-                    .build();
+                    .build()
 
                 client.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) throw RuntimeException("The mod could not be installed: $response")
