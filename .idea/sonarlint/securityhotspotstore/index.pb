@@ -18,8 +18,6 @@ G
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-S
-#src/main/kotlin/logs/Remove_log.kts,7\2\72d23270d66da44cd91ed9d090efb9785a807751
 9
 	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 A
@@ -28,24 +26,15 @@ A
 gradlew,5\b\5bbfa66edb4db3c7c33c5181f43510990d3307f9
 S
 #src/main/java/handlers/SetIcon.java,e\6\e68313ad2e2875f00b1530ed56afcff9635fb2d1
-:
-
-index.html,f\6\f6013a00b362253c64368d6eebc50ea2131754e2
 ;
 gradlew.bat,2\a\2a45a911a8f1836b0b6c5b758962572012d8f8c3
-6
-mmm.py,3\b\3bf0a883a60fedd9acfead4879a3676e2ee5e72a
 Å
 Q.idea/sonarlint/securityhotspotstore/2/a/2a45a911a8f1836b0b6c5b758962572012d8f8c3,1\0\1017d171139053a6ceaff055b7159ba14e80dc44
-w
-G.idea/sonarlint/issuestore/f/6/f6013a00b362253c64368d6eebc50ea2131754e2,4\0\40eb5791e20bdb25d1a3bafa3bea91bedb886b5e
 w
 G.idea/sonarlint/issuestore/2/a/2a45a911a8f1836b0b6c5b758962572012d8f8c3,9\a\9aed88f31eac276604c6355c1adcc0bce1f80fd6
 S
 #.idea/sonarlint/issuestore/index.pb,9\f\9fe84ebb15faf917b7def6236dba604453cc61e0
-Å
-Q.idea/sonarlint/securityhotspotstore/f/6/f6013a00b362253c64368d6eebc50ea2131754e2,7\9\796ba26502cdd66b0127ed38af677b753d8d3862
-Å
-Q.idea/sonarlint/securityhotspotstore/3/b/3bf0a883a60fedd9acfead4879a3676e2ee5e72a,f\a\fae4d2881bfba00af64c63b0d65599d44568a987
 ]
 -.idea/sonarlint/securityhotspotstore/index.pb,8\8\88a9255124c95bdc913197c120a8d560edc59c8e
+6
+ttt.py,3\1\31eae9fd572e4d2e8840ffa006e9e5503d331462

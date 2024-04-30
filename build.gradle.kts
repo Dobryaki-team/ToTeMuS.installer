@@ -22,6 +22,7 @@ java {
 
 dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("com.google.code.gson:gson:2.9.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.codehaus.groovy:groovy-all:3.0.9")

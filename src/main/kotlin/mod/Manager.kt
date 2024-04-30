@@ -3,12 +3,14 @@
 package totemus.space.mod
 
 /* imports */
-// json
+// gson
 // okhttp3
 // local
 // java*
+// kotlin*
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import totemus.space.Root.scaledMarskefont
@@ -25,12 +27,15 @@ import javax.swing.*
 class Manager {
     companion object {
         private val client = OkHttpClient()
-        private const val githubLink: String = "https://raw.githubusercontent.com/Dobryaki-team/ToTeMuS.installer/main/src/main/resources/links/api.link"
-        private var apiLink: String = ((client.newCall(Request.Builder().url(githubLink).build()).execute().body.string())
-            .replace(
-                Regex("['\"]"),
-                "")
-            .trim()) + "/get"
+        private const val githubLink: String =
+            "https://raw.githubusercontent.com/Dobryaki-team/ToTeMuS.installer/main/src/main/resources/links/api.link"
+        private var apiLink: String = runBlocking {
+            ((client.newCall(Request.Builder().url(githubLink).build()).execute().body.string())
+                .replace(
+                    Regex("['\"]"),
+                    "")
+                .trim()) + "/get"
+        }
 
         private fun downloadMod(url: String, destination: File) {
             try {
@@ -56,7 +61,7 @@ class Manager {
             }
         }
 
-        private fun downloadMods(progressBar: JProgressBar, destinationFolder: String, versions: Versions) {
+        private suspend fun downloadMods(progressBar: JProgressBar, destinationFolder: String, versions: Versions) {
             val modrinthMods = mapOf(
                 "cit_resewn" to versions.citResewn,
                 "totemus" to versions.totemus,
@@ -67,27 +72,31 @@ class Manager {
             var currentProgress = 0
 
             try {
-                for ((modName, modVersion) in modrinthMods) {
-                    val modLogName: String =
-                        if (modName == "cit_resewn") {
-                            "cit_resewn.jar"
-                        } else (if (modName == "fabric_api") {
-                            "fabric_api.jar"
+                coroutineScope {
+                    for ((modName, modVersion) in modrinthMods) {
+                        val modLogName: String =
+                            if (modName == "cit_resewn") {
+                                "cit_resewn.jar"
+                            } else (if (modName == "fabric_api") {
+                                "fabric_api.jar"
+                            } else {
+                                "totemus.jar"
+                            }).toString()
+                        if (modVersion != null) {
+                            val modUrl = when {
+                                modVersion.startsWith("/") -> apiLink + modVersion
+                                else -> getModLink(modVersion, modLogName).toString()
+                            }
+                            val modFile = File(destinationFolder, modLogName)
+                            launch {
+                                downloadMod(modUrl, modFile)
+                                log("The $modLogName mod has been successfully loaded.")
+                                currentProgress++
+                                progressBar.value = currentProgress
+                            }
                         } else {
-                            "totemus.jar"
-                        }).toString()
-                    if (modVersion != null) {
-                        val modUrl = when {
-                            modVersion.startsWith("/") -> apiLink + modVersion
-                            else -> getModLink(modVersion, modLogName).toString()
+                            log("The version of the mod $modLogName is null, skip the download.")
                         }
-                        val modFile = File(destinationFolder, modLogName)
-                        downloadMod(modUrl, modFile)
-                        log("The $modLogName mod has been successfully loaded.")
-                        currentProgress++
-                        progressBar.value = currentProgress
-                    } else {
-                        log("The version of the mod $modLogName is null, skip the download.")
                     }
                 }
                 log("All mods have been successfully uploaded.")
@@ -135,6 +144,7 @@ class Manager {
             return null
         }
 
+        @OptIn(DelicateCoroutinesApi::class)
         fun chooseDownloadFolder(progressBar: JProgressBar) {
             val client = OkHttpClient()
             val request = Request.Builder()
@@ -143,45 +153,47 @@ class Manager {
 
             @Suppress("RemoveCurlyBracesFromTemplate")
             try {
-                client.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) {
-                        log("Couldn't get the mod versions, code: ${response.code}")
-                        JOptionPane.showMessageDialog(null, "Couldn't get the mod versions, code: ${response.code}")
-                        return
-                    }
-
-                    val modVersionsJson = response.body?.string()
-                    if (modVersionsJson.isNullOrEmpty()) {
-                        log("Failed to get the mods versions: an empty response from the server.")
-                        JOptionPane.showMessageDialog(null, "Failed to get the mods versions: an empty response from the server.")
-                        return
-                    }
-
-                    val modVersions = Gson().fromJson(modVersionsJson, Versions::class.java)
-                    log("Received versions of mods: $modVersions")
-
-                    val fileChooser = JFileChooser()
-                    fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-                    val result = fileChooser.showOpenDialog(null)
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        val selectedFolder = fileChooser.selectedFile
-                        val folder: String = if (!selectedFolder.absolutePath.endsWith("mods")) {
-                            selectedFolder.absolutePath + File.separator + "mods"
-                        } else {
-                            (selectedFolder.absolutePath)
+                GlobalScope.launch {
+                    client.newCall(request).execute().use { response ->
+                        if (!response.isSuccessful) {
+                            log("Couldn't get the mod versions, code: ${response.code}")
+                            JOptionPane.showMessageDialog(null, "Couldn't get the mod versions, code: ${response.code}")
+                            return@launch
                         }
-                        if (!File(folder).exists()) File(folder).mkdir()
-                        log("The folder for downloading mods is selected: ${folder}")
-                        downloadMods(progressBar, folder, modVersions)
+
+                        val modVersionsJson = response.body?.string()
+                        if (modVersionsJson.isNullOrEmpty()) {
+                            log("Failed to get the mods versions: an empty response from the server.")
+                            JOptionPane.showMessageDialog(null, "Failed to get the mods versions: an empty response from the server.")
+                            return@launch
+                        }
+
+                        val modVersions = Gson().fromJson(modVersionsJson, Versions::class.java)
+                        log("Received versions of mods: $modVersions")
+
+                        val fileChooser = JFileChooser()
+                        fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+                        val result = fileChooser.showOpenDialog(null)
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            val selectedFolder = fileChooser.selectedFile
+                            val folder: String = if (!selectedFolder.absolutePath.endsWith("mods")) {
+                                selectedFolder.absolutePath + File.separator + "mods"
+                            } else {
+                                (selectedFolder.absolutePath)
+                            }
+                            if (!File(folder).exists()) File(folder).mkdir()
+                            log("The folder for downloading mods is selected: ${folder}")
+                            downloadMods(progressBar, folder, modVersions)
+                        }
                     }
                 }
             } catch (e: Exception) {
                 log("Error when selecting a folder to download mods: ${e.message}")
                 JOptionPane.showMessageDialog(null,
                     "An error occurred when selecting a folder for downloading mods:" +
-                        "\n---------------------------------------\n" +
-                        "${e.message}" +
-                        "\n---------------------------------------"
+                            "\n---------------------------------------\n" +
+                            "${e.message}" +
+                            "\n---------------------------------------"
                 )
             }
         }
