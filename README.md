@@ -10,7 +10,12 @@ download .exe from [this link](https://github.com/Dobryaki-team/ToTeMuS.installe
 
 download java17 (if not)
 
-run. (two clicks on the file)
+run. (two clicks on the file or:
+use command
+```sh
+./ToTeMuS_installer._.exe # or path to our file
+```
+)
 
 ### with .jar:
 download .jar from [this link](https://github.com/Dobryaki-team/ToTeMuS.installer/raw/main/releases/ToTeMuS_installer._.jar)
