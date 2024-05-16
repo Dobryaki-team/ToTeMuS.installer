@@ -7,6 +7,7 @@ this is Totemus Mod Installer
 ## How to use it?
 ### with .exe:
 download .exe from [this link](https://github.com/Dobryaki-team/ToTeMuS.installer/raw/main/releases/ToTeMuS_installer._.exe)
+
 download java17 (if not)
 run. (two clicks on the file)
 ### with .jar:
